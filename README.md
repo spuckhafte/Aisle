@@ -6,3 +6,9 @@ a free musical expirience
  - Tailwind
  - TRPC
  - (figuring out for backend)
+
+### Todo
+ - [x] Init
+ - [ ] Login
+   - [x] Frontend
+   - [ ] Backend
