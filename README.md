@@ -1,9 +1,8 @@
 # Aisle
 a free musical expirience
 
-# Tech Stack
+### Tech Stack
  - React + v6
  - Tailwind
  - TRPC
-
-# Aisle
+ - (figuring out for backend)
