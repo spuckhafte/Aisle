@@ -1,5 +1,6 @@
-import { error } from "console"
-import React, { InputHTMLAttributes, useState } from "react"
+"use client"
+
+import React from "react"
 
 type InputElementProps = {
     content: {
@@ -9,7 +10,7 @@ type InputElementProps = {
     placeholder?: string,
     error?: string,
     type?: React.HTMLInputTypeAttribute,
-    className?: string 
+    className?: string,
 }
 
 export default function Input(props: InputElementProps) {

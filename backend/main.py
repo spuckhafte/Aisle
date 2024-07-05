@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api, Resource
+from handlers.routes.signup import Signup
 from handlers.middleware import middleware
 from dotenv import dotenv_values
 
@@ -17,6 +18,7 @@ class Home(Resource):
         };
 
 api.add_resource(Home, "/");
+api.add_resource(Signup, "/signup");
 
 if __name__ == "__main__":
     app.run(debug=True);

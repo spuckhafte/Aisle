@@ -1,8 +1,14 @@
 "use client"
+
 import Image from "next/image";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Input from "../ui/components/Input";
 import Button from "../ui/components/Button";
+import { rawFetch } from "../lib/actions";
+
+type SignupResponse = {
+    
+}
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -10,6 +16,27 @@ export default function Login() {
     
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
+
+    const [triggerSignup, setTriggerSignup] = useState(0);
+
+    useEffect(() => {
+        if (!triggerSignup) return;
+        
+        const signup = async () => {
+            const response = await rawFetch<SignupResponse>({
+                type: "POST",
+                query: {
+                    path: "/signup",
+                    payload: { username, password },
+                }
+            });
+
+            console.log(response);
+        };
+        
+        signup();
+    }, [triggerSignup]);
+
 
     return <div className="w-full h-[100vh] flex flex-col justify-center items-center">
         <div className="flex flex-col justify-center items-center">
@@ -45,7 +72,10 @@ export default function Login() {
             <div className="text-xs text-gray-400 font-semibold flex flex-col justify-center items-center">
                 <span>Don't have an account yet?</span>
                 <span className=" my-1">
-                    <span className="text-alter underline cursor-pointer">Sign Up</span> 
+                    <span 
+                        className="text-alter underline cursor-pointer"
+                        onClick={() => setTriggerSignup(prev => prev + 1)}
+                    >Sign Up</span> 
                     {" "} with the above details instead
                 </span>
             </div>

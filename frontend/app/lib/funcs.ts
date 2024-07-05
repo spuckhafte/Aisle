@@ -3,6 +3,10 @@ export async function getIP() {
     return (await ip.json()).ip as string;
 }
 
+export function getServerAddr() {
+    return "http://localhost:5000";
+}
+
 export function LsKey(key: string) {
     return `@aisle-${key}`
 }
