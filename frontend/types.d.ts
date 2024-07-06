@@ -1,10 +1,5 @@
-export interface ClientValidate {
-    token?: string
-    ip?: string
-}
-
-type FetchMethods = "GET" | "POST";
-type FetchPayload = {
+export type FetchMethods = "GET" | "POST";
+export type FetchPayload = {
     GET: {
         path: string
     },
@@ -13,7 +8,7 @@ type FetchPayload = {
         payload: any
     }
 }
-type FetchStructure<T extends FetchMethods> = {
+export type FetchStructure<T extends FetchMethods> = {
     type: T
     query: FetchPayload[T]
 }

@@ -1,5 +1,6 @@
 Flask==3.0.3
 Flask-RESTful==0.3.10 
-pymongo[srv]
-Flask-PyMongo
 python-dotenv
+supabase
+python-dateutil
+pyjwt

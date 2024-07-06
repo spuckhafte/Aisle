@@ -1,16 +1,22 @@
 "use server"
 
 import { FetchMethods, FetchStructure } from "@/types";
-import { getServerAddr, LsKey } from "./funcs";
+import { getIP, getServerAddr, LsKey } from "./funcs";
 import { cookies } from "next/headers";
 
 export async function rawFetch<T, K extends FetchMethods = FetchMethods>(requestStructure: FetchStructure<K>): Promise<T | null> {
     const SERVER_ADDR = getServerAddr();
-    const clientValidateCookie = cookies().get(LsKey("client-validate"))
-    const authDetails = clientValidateCookie ? clientValidateCookie.value : "{}";
+    const serverTokenCookie = cookies().get(LsKey("server-token"))
+    const serverToken = serverTokenCookie ? serverTokenCookie.value : "";
+    const ipAddr = await getIP();
+
+    const auth = {
+        token: serverToken,
+        ip: ipAddr,
+    };
 
     const header = new Headers();
-    header.append("Authorization", JSON.stringify(authDetails));
+    header.append("Authorization", JSON.stringify(auth));
     header.append("Content-Type", "application/json");
 
     try {
