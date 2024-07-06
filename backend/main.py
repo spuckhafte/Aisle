@@ -1,6 +1,6 @@
 from flask import Flask
-from flask_restful import Api, Resource
-from handlers.routes.signup import Signup
+from flask_restful import Api
+from settings import RouteManager
 from handlers.middleware import middleware
 from dotenv import dotenv_values
 
@@ -11,14 +11,7 @@ api = Api(app);
 
 app.wsgi_app = middleware(app.wsgi_app);
 
-class Home(Resource):
-    def get(self):
-        return {
-            "data": "hello"
-        };
-
-api.add_resource(Home, "/");
-api.add_resource(Signup, "/signup");
+RouteManager(api)
 
 if __name__ == "__main__":
     app.run(debug=True);
