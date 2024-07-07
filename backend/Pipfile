@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "==3.0.3"
+flask-restful = "==0.3.10"
+python-dotenv = "*"
+supabase = "*"
+python-dateutil = "*"
+pyjwt = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
