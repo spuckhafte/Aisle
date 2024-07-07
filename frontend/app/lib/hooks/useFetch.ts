@@ -1,3 +1,5 @@
+/** Archived: might delete later
+
 import { ClientValidate, FetchMethods, FetchStructure } from "@/types";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
@@ -31,5 +33,5 @@ export default function useFetch<T, K extends FetchMethods>(requestStructure: Fe
 
     return [Res[0], ResFailed[0]] as [(T | null), boolean];
 }
-
+*/
 
