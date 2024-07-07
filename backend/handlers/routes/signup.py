@@ -10,7 +10,6 @@ from handlers.db import db
 EXPIRE_DELTA_DAY = 2
 
 ACCESS_TOKEN_SECRET = getEnv("ACCESS_TOKEN_SECRET")
-REFRESH_TOKEN_SECRET = getEnv("REFRESH_TOKEN_SECRET")
 
 class Signup(Resource):
     def post(self):
@@ -28,15 +27,24 @@ class Signup(Resource):
         username, password = payload["username"], payload["password"]
         password_hash = sha256(str.encode(password)).hexdigest()
 
-        user_with_similar_name = db.Users.select(U().gk(username=True)).eq("username", username).execute()
-        if len(user_with_similar_name.data) > 0:
-            return { "err": "username already exists" }, 400
+        user_with_similar_name = []
+        try:
+            user_with_similar_name = db.Users.select(U().gk(username=True)).eq("username", username).execute()
+            if len(user_with_similar_name.data) > 0:
+                return { "err": "(showcase)Username already taken" }, 400
+        except:
+            return { "err": "database failed" }, 500
 
         encode_data = {
                 "ip": authData["ip"],
                 "birth": time()
                 }
-        encoded_jwt = jwt.encode(encode_data, ACCESS_TOKEN_SECRET, algorithm="HSA256")
+        encoded_jwt = jwt.encode(encode_data, ACCESS_TOKEN_SECRET)
+        
+        try:
+            db.Users.insert(U(username=username, password=password_hash).gd()).execute()
+        except:
+            return { "err": "database failed" }, 500
 
         return { 
                 "token": encoded_jwt,
@@ -45,3 +53,4 @@ class Signup(Resource):
 
     def get(self):
         return { "hello": "world" }
+

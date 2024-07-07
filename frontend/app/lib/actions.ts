@@ -30,3 +30,9 @@ export async function rawFetch<T, K extends FetchMethods = FetchMethods>(request
         return null;
     }
 }
+
+export async function getUser() {}
+
+export async function storeInCookie(data: string) {
+    cookies().set(LsKey("server-token"), data);
+}

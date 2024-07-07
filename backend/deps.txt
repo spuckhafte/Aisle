@@ -3,4 +3,4 @@ Flask-RESTful==0.3.10
 python-dotenv
 supabase
 python-dateutil
-pyjwt
+pyjwt[crypto]

@@ -4,13 +4,19 @@ import Image from "next/image";
 import { useEffect, useState } from "react"
 import Input from "../ui/components/Input";
 import Button from "../ui/components/Button";
-import { rawFetch } from "../lib/actions";
+import { rawFetch, storeInCookie } from "../lib/actions";
+import { passwordSchema, usernameSchema } from "../lib/zchemas";
+import { getZodError } from "../lib/funcs";
+import { useRouter } from "next/navigation";
 
 type SignupResponse = {
-    
+    token: string,
+    err: string,
 }
 
 export default function Login() {
+    const router = useRouter()
+
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState("");
     
@@ -22,6 +28,21 @@ export default function Login() {
     useEffect(() => {
         if (!triggerSignup) return;
         
+        try {
+            usernameSchema.parse(username);
+        } catch (e) {
+            setUsernameError(getZodError(e));
+            return;
+        };
+
+        try {
+            passwordSchema.parse(password);
+        } catch (e) {
+            setPasswordError(getZodError(e));
+            return;
+        };
+          
+
         const signup = async () => {
             const response = await rawFetch<SignupResponse>({
                 type: "POST",
@@ -31,15 +52,30 @@ export default function Login() {
                 }
             });
 
-            console.log(response);
+            if (!response) {
+                console.log("no response from server");
+                return
+            }
+            
+            if (response.err && response.err.includes("(showcase)")) {
+                setUsernameError(response.err.split("(showcase)")[1].trim());
+            }
+
+            if (response.err)
+                return;
+
+            await storeInCookie(response.token)
+            router.replace("/");
         };
         
         signup();
     }, [triggerSignup]);
 
+    useEffect(() => setUsernameError(""), [username]);
+    useEffect(() => setPasswordError(""), [password]);
 
     return <div className="w-full h-[100vh] flex flex-col justify-center items-center">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center w-[300px]">
             <div className="flex flex-col justify-center items-center mb-4">
                 <Image src="/logo.png" alt="logo" width={300} height={150}/>
                 <div className="italic font-extrabold transform translate-y-[-15px]">
