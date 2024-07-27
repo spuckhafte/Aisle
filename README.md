@@ -5,6 +5,7 @@ a free musical expirience
  - Next 14
  - Tailwind
  - Python (Flask)
+ - Supabase (Db)
 
 ### Todo
  - [x] Init
