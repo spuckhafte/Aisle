@@ -2,9 +2,10 @@
 a free musical expirience
 
 ### Tech Stack
- - React + v6
+ - Next 14
  - Tailwind
  - Python (Flask)
+ - Supabase (Db)
 
 ### Todo
  - [x] Init
