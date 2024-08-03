@@ -1,18 +1,19 @@
 "use server"
 
 import { FetchMethods, FetchStructure } from "@/types";
-import { getIP, getServerAddr, LsKey } from "./funcs";
+import { getServerAddr, LsKey } from "./funcs";
 import { cookies } from "next/headers";
 
-export async function rawFetch<T, K extends FetchMethods = FetchMethods>(requestStructure: FetchStructure<K>): Promise<T | null> {
+export async function rawFetch<T, K extends FetchMethods = FetchMethods>(
+    requestStructure: FetchStructure<K>,
+    responseType: "json" | "text" = "json",
+): Promise<T | null> {
     const SERVER_ADDR = getServerAddr();
     const serverTokenCookie = cookies().get(LsKey("server-token"))
     const serverToken = serverTokenCookie ? serverTokenCookie.value : "";
-    const ipAddr = await getIP();
-
+    
     const auth = {
         token: serverToken,
-        ip: ipAddr,
     };
 
     const header = new Headers();
@@ -24,14 +25,24 @@ export async function rawFetch<T, K extends FetchMethods = FetchMethods>(request
             method: requestStructure.type,
             headers: header,
             body: JSON.stringify(requestStructure.query),
-        })).json();
+        }))[responseType]();
     } catch (e) {
         console.log(e);
         return null;
     }
 }
 
-export async function getUser() {}
+export async function isLoggedIn() {
+    const response = await rawFetch<string>({
+        type: "POST",
+        query: {
+            path: "/is_logged_in",
+            payload: ""
+        }
+    }, "text");
+
+    return `${response}`.includes("true");
+}
 
 export async function storeInCookie(data: string) {
     cookies().set(LsKey("server-token"), data);

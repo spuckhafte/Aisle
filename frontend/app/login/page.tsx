@@ -9,7 +9,7 @@ import { passwordSchema, usernameSchema } from "../lib/zchemas";
 import { getZodError } from "../lib/funcs";
 import { useRouter } from "next/navigation";
 
-type SignupResponse = {
+type SignupLoginResponse = {
     token: string,
     err: string,
 }
@@ -24,6 +24,7 @@ export default function Login() {
     const [passwordError, setPasswordError] = useState("");
 
     const [triggerSignup, setTriggerSignup] = useState(0);
+    const [triggerLogin, setTriggerLogin] = useState(0);
 
     useEffect(() => {
         if (!triggerSignup) return;
@@ -44,12 +45,12 @@ export default function Login() {
           
 
         const signup = async () => {
-            const response = await rawFetch<SignupResponse>({
+            const response = await rawFetch<SignupLoginResponse>({
                 type: "POST",
                 query: {
                     path: "/signup",
                     payload: { username, password },
-                }
+                },
             });
 
             if (!response) {
@@ -70,6 +71,51 @@ export default function Login() {
         
         signup();
     }, [triggerSignup]);
+
+    useEffect(() => {
+        if (!triggerLogin) return;
+        console.log("here")
+        if (username.trim().length == 0) {
+            setUsernameError("Username can't be empty");
+            return;
+        }
+        if (password.trim().length == 0) {
+            setPasswordError("Password can't be empty");
+            return;
+        }
+
+        const login = async () => {
+            const response = await rawFetch<SignupLoginResponse>({
+                type: "POST",
+                query: {
+                    path: "/login",
+                    payload: { username, password }
+                },
+            });
+            
+            console.log(response)
+    
+            if (!response) {
+                console.log("No response from server");
+                return;
+            }
+
+            if (response.err && response.err.includes("(showcase)")) {
+                // details doesn't match
+                setUsernameError(response.err.split("(showcase)")[1]);
+                setPasswordError(response.err.split("(showcase)")[1]);
+                return;
+            }
+
+            if (response.err) 
+                return;
+
+            await storeInCookie(response.token);
+            router.replace("/")
+        }
+
+        login()
+    }, [triggerLogin])
 
     useEffect(() => setUsernameError(""), [username]);
     useEffect(() => setPasswordError(""), [password]);
@@ -103,7 +149,11 @@ export default function Login() {
                     type="password"
                     className="mb-3"
                />
-               <Button text="Log In" className="mb-3"/>
+               <Button 
+                    onClick={() => setTriggerLogin(prev => prev + 1)}
+                    text="Log In" 
+                    className="mb-3"
+                />
             </div>
             <div className="text-xs text-gray-400 font-semibold flex flex-col justify-center items-center">
                 <span>Don't have an account yet?</span>

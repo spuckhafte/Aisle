@@ -1,4 +1,6 @@
 # Users
+id: str
+birth: str
 username: str 
 password: str 
 playlists: list[int] 

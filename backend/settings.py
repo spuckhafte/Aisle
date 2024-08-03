@@ -1,8 +1,12 @@
 from flask_restful import Api
+from handlers.routes.logged_in import LoggedIn
+from handlers.routes.login import Login
 from handlers.routes.signup import Signup
 
 resources = {
     "/signup": Signup,
+    "/login": Login,
+    "/is_logged_in": LoggedIn
 }
 
 class RouteManager:

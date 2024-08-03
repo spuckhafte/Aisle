@@ -3,7 +3,7 @@ from time import time
 from flask_restful import Resource, request
 from hashlib import sha256
 from handlers.cs import U
-from handlers.funcs import getEnv
+from handlers.funcs import getClientIP, getEnv
 import jwt
 from handlers.db import db
 
@@ -36,7 +36,7 @@ class Signup(Resource):
             return { "err": "database failed" }, 500
 
         encode_data = {
-                "ip": authData["ip"],
+                "ip": getClientIP(request),
                 "birth": time()
                 }
         encoded_jwt = jwt.encode(encode_data, ACCESS_TOKEN_SECRET)
