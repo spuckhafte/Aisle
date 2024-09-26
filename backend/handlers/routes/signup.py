@@ -2,7 +2,7 @@ import json
 from time import time
 from flask_restful import Resource, request
 from hashlib import sha256
-from handlers.cs import U
+from handlers.schema.User import User
 from handlers.funcs import getClientIP, getEnv
 import jwt
 from handlers.db import db
@@ -29,7 +29,9 @@ class Signup(Resource):
 
         user_with_similar_name = []
         try:
-            user_with_similar_name = db.Users.select(U().gk(username=True)).eq("username", username).execute()
+            user_with_similar_name = db.Users.select(User({
+                "username": ""
+                }).gk()).eq("username", username).execute()
             if len(user_with_similar_name.data) > 0:
                 return { "err": "(showcase)Username already taken" }, 400
         except:
@@ -42,7 +44,10 @@ class Signup(Resource):
         encoded_jwt = jwt.encode(encode_data, ACCESS_TOKEN_SECRET)
         
         try:
-            db.Users.insert(U(username=username, password=password_hash).gd()).execute()
+            db.Users.insert(User({
+                "username": username, 
+                "password": password_hash
+                }).gd()).execute()
         except:
             return { "err": "database failed" }, 500
 

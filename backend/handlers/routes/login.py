@@ -1,7 +1,7 @@
 from flask_restful import Resource, request
+from handlers.schema.User import User
 from handlers.funcs import getClientIP, getEnv
 from handlers.db import db
-from handlers.cs import U
 from hashlib import sha256
 from time import time
 import jwt
@@ -28,7 +28,7 @@ class Login(Resource):
         existing_user = [] # len: 0 | 1
         try:
             existing_user = db.Users.select(
-                    U().gk(id=True)
+                    User({"id": ""}).gk()
                     ).eq("username", username).eq(
                             "password", password_hash
                             ).execute().data
